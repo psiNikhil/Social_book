@@ -5,14 +5,57 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import Profile,Post,LikePost,FollowersCount
 from itertools import chain 
+import requests
+import os
+
+
 # Create your views here.
+
+#DECLARING A GLOBAL VARIABLE
+
+
+def weather_data(location) :
+    
+    BASE_URL = open("api.txt", 'r').read()
+   
+
+    print(BASE_URL)
+    city = str(location)
+    url = BASE_URL + city
+    
+    
+
+    response =requests.get(url).json()
+
+
+    def kelvin_celsius (kelvin):
+        celsious = kelvin-273.15
+        return celsious
+
+
+    temp_kelvin =response['main']['temp']
+    temp_celsius = round(kelvin_celsius(temp_kelvin),2)
+    temp_min = round(kelvin_celsius(response['main']['temp_min']),2)
+    temp_max = round(kelvin_celsius(response['main']['temp_max']),2)
+    description= response['weather'][0]['description']
+
+    context ={
+        'city' : city,
+        'temp_celsius' : temp_celsius,
+        'description': description,
+        'temp_min' : temp_min,
+       'temp_max' : temp_max
+
+    }
+    return context
+
 
 
 @login_required(login_url='signin')
 def index(request):
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
-    
+    user_location =getattr(user_profile,'location')
 
     user_following_list =[]
     feed =[]
@@ -27,10 +70,11 @@ def index(request):
         feed.append(feed_lists)
 
     feed_list =list(chain(*feed))
-
+    weather_dict = weather_data(user_location)
+    
 
     posts =Post.objects.all()
-    return render(request, 'index.html',{'user_profile' : user_profile , 'posts':feed_list})
+    return render(request, 'index.html',{'user_profile' : user_profile , 'posts':feed_list ,'weather' :weather_dict})
 
 @login_required(login_url='signin')
 def upload(request):
@@ -225,3 +269,20 @@ def signin (request):
 def logout(request):
     auth.logout(request)
     return redirect('signin')
+
+@login_required(login_url='signin')
+def city(request):
+    city_name = None  # Initialize the variable outside the if block
+
+    if request.method == "POST":
+        city_name = request.POST.get('city')  # Use get() to avoid KeyError
+
+    if city_name:  # Only redirect if city_name is not None
+        redirect_url = "https://openweathermap.org/find?q={}".format(city_name)
+        return redirect(redirect_url)
+
+    return render(request, 'index.html')  # Replace with your template name
+
+    
+
+

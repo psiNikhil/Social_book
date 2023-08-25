@@ -15,12 +15,15 @@
     <link rel="stylesheet" href="{% static 'assets/css/uikit.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/tailwind.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
 
             <header>
                 <div class="header_inner">
+                <form action="/city" method="Post">
+                    {% csrf_token %}
                     <div class="left-side">
                         <!-- Logo -->
                         <div id="logo" class=" uk-hidden@s">
@@ -32,19 +35,14 @@
                         <!--<div class="triger" uk-toggle="target: #wrapper ; cls: sidebar-active">
                             <i class="uil-bars"></i>
                         </div>-->
-
-                        <div class="header_search">
-                            <input type="text" placeholder="Search for username..">
-                            <div class="icon-search">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </div>
-                        </div>
-
+                    
+                        <!-- <div class="header_search"> -->
+                            <input type="text" name ="city" placeholder="Search for username..">
+                            <button type="submit"><i class="fa fa-search fa-1x"></i></button>
+                        <!-- </div> -->
+                    
                     </div>
+                </form>
                     <div class="right-side lg:pr-4">
                          <!-- upload -->
                         <a href="#"
@@ -408,8 +406,52 @@
                             </div>
 
                         </div>
+                        <br>
+                        <!-- This is to add the weather widget -->
+                        <!-- <head>
+                        <p>Weather in {{ weather.city }}  </p>
+                        </head>
+                        <p>Temp = {{ weather.temp_celsius }}°C</p>
+                        <p>Description = {{  weather.description }}</p>
+                        <p>Maximum Temperature = {{  weather.temp_max }}°C</p>
+                        <p>Minimum Temperature = {{  weather.temp_min }}°C</p> -->
 
-                      
+                        <style>
+                            .weather-container {
+                                background-color: #f5f5f5;
+                                padding: 20px;
+                                border-radius: 5px;
+                                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                                text-align: center;
+                            }
+                            .weather-data {
+                                font-size: 18px;
+                                margin: 10px 0;
+                            }
+                            .temperature {
+                                font-weight: bold;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="weather-container">
+                            <div class="weather-data">
+                                <p>Weather in {{weather.city}}</p>
+                                <p class="temperature">Temp: {{ weather.temp_celsius }}°C</p>
+                                <p>Description: {{ weather.description }}</p>
+                                <p>Max Temperature: {{ weather.temp_max }}°C</p>
+                                <p>Min Temperature: {{ weather.temp_min }}°C</p>
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+                                        
 
                     </div>
 
